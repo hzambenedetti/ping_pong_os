@@ -41,14 +41,27 @@ void setup_timer(){
   }
 
 }
+
+int task_get_eet(task_t* task){
+  if (task != NULL){
+    return task->running_time;
+  }
+  return NULL;
+}
+
+void task_set_eet(task_t* task, int time){
+  if(task != NULL){
+    task->running_time = time;
+  }
+}
 // ****************************************************************************
 
 
 
 void before_ppos_init () {
     // put your customization here
-  setup_signal();
-  setup_timer();
+  // setup_signal();
+  // setup_timer();
 #ifdef DEBUG
     printf("\ninit - BEFORE");
 #endif
@@ -70,6 +83,7 @@ void before_task_create (task_t *task ) {
 
 void after_task_create (task_t *task ) {
     // put your customization here
+    task->running_time = 0;
 #ifdef DEBUG
     printf("\ntask_create - AFTER - [%d]", task->id);
 #endif
