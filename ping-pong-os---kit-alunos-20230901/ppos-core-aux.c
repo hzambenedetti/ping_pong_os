@@ -56,7 +56,6 @@ void task_set_eet(task_t* task, int time){
   else{
     taskExec->eet = time;
     taskExec->ret = time;
-    }
   }
 }
 // ****************************************************************************
