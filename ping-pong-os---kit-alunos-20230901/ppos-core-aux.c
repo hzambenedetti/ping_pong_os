@@ -44,14 +44,21 @@ void setup_timer(){
 
 int task_get_eet(task_t* task){
   if (task != NULL){
-    return task->running_time;
+    return task->eet;
   }
-  return NULL;
+  return taskExec->eet;
 }
 
 void task_set_eet(task_t* task, int time){
   if(task != NULL){
-    task->running_time = time;
+    task->eet = time;
+    task->ret = time;
+  }
+  else{
+    taskExec->eet = time;
+    if(time < taskExec->ret){
+      taskExec->ret = time;
+    }
   }
 }
 // ****************************************************************************
