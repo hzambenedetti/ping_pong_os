@@ -10,15 +10,16 @@
 
 struct sigaction action;
 struct itimerval timer;
-int ticks = 20;
+int ticks = 200;
 
 void tick_timer(){
   ticks--;
-  printf("\ntick...");
-  if (ticks == 0){
-    printf("\npiririririririiiiim");
+  if (ticks < 1 && PPOS_IS_PREEMPT_ACTIVE){
+    task_yield();
+    ticks = 500;
   }
 }
+
 void setup_signal(){
   action.sa_handler = tick_timer;
   sigemptyset(&action.sa_mask);
@@ -38,6 +39,7 @@ void setup_timer(){
     perror("Erro");
     exit(1);
   }
+
 }
 // ****************************************************************************
 
@@ -431,6 +433,7 @@ int after_mqueue_msgs (mqueue_t *queue) {
 }
 
 task_t * scheduler() {
+    // printf("\nHello from the scheduler!\n");
     // FCFS scheduler
     if ( readyQueue != NULL ) {
         return readyQueue;
