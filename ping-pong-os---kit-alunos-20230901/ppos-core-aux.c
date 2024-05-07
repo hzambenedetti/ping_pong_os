@@ -52,12 +52,10 @@ int task_get_eet(task_t* task){
 void task_set_eet(task_t* task, int time){
   if(task != NULL){
     task->eet = time;
-    task->ret = time;
   }
   else{
     taskExec->eet = time;
-    if(time < taskExec->ret){
-      taskExec->ret = time;
+    taskExec->ret = time;
     }
   }
 }
