@@ -17,7 +17,6 @@ void tick_timer(){
   printf("\ntick...");
   if (ticks == 0){
     printf("\npiririririririiiiim");
-    ticks = 20;
   }
 }
 void setup_signal(){
