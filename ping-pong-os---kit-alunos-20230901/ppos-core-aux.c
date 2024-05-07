@@ -5,14 +5,49 @@
 // ****************************************************************************
 // Coloque aqui as suas modificações, p.ex. includes, defines variáveis, 
 // estruturas e funções
+#include<signal.h>
+#include<sys/time.h>
 
+struct sigaction action;
+struct itimerval timer;
+int ticks = 20;
 
+void tick_timer(){
+  ticks--;
+  printf("\ntick...");
+  if (ticks == 0){
+    printf("\npiririririririiiiim");
+    ticks = 20;
+  }
+}
+void setup_signal(){
+  action.sa_handler = tick_timer;
+  sigemptyset(&action.sa_mask);
+  action.sa_flags = 0;
+  if(sigaction(SIGALRM, &action, 0) < 0){
+    perror("Erro");
+    exit(1);
+  }
+}
+
+void setup_timer(){
+  timer.it_value.tv_usec = 1000; //1ms
+  timer.it_value.tv_sec = 0;
+  timer.it_interval.tv_usec = 1000; // 1ms
+  timer.it_interval.tv_sec = 0;
+  if(setitimer(ITIMER_REAL, &timer, 0) < 0){
+    perror("Erro");
+    exit(1);
+  }
+}
 // ****************************************************************************
 
 
 
 void before_ppos_init () {
     // put your customization here
+  setup_signal();
+  setup_timer();
 #ifdef DEBUG
     printf("\ninit - BEFORE");
 #endif
