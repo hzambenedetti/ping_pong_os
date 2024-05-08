@@ -90,7 +90,7 @@ int main (int argc, char *argv[])
     task_create (&user_tasks[i], Body, &user_tasks_names[i]) ;
     task_set_eet(&user_tasks[i], user_tasks_execution_time[i]);
   }
-  task_set_eet(NULL, (1 >> 31));
+  task_set_eet(NULL, 300);
   task_yield () ;
 
   printf ("main: fim\n");

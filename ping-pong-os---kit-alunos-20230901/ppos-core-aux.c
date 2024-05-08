@@ -9,8 +9,8 @@
 #include<sys/time.h>
 
 #define DEFAULT_TICKS 20
-#define DEFAULT_EET 100
-#define INT_MAX (1 >> 31) - 1
+#define DEFAULT_EET 300
+#define INT_MAX 100000
 
 struct sigaction action;
 struct itimerval timer;
@@ -472,6 +472,7 @@ task_t * scheduler() {
       next = iter;
       min = next->ret;
     }
+    iter = iter->next;
   }
   return next;
 }
