@@ -66,6 +66,13 @@ void task_set_eet(task_t* task, int time){
     taskExec->ret = time;
   }
 }
+
+int task_get_ret(task_t* task, int ret){
+  if(task != NULL){
+    return task->ret;
+  }
+  return taskExec->ret;
+}
 // ****************************************************************************
 
 
