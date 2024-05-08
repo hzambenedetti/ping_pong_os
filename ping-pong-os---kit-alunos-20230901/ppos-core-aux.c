@@ -107,6 +107,7 @@ void after_task_create (task_t *task ) {
     task->running_time = 0;
     task->eet = DEFAULT_EET;
     task->ret = DEFAULT_EET;
+    task->launch_timestamp = systime();
 #ifdef DEBUG
     printf("\ntask_create - AFTER - [%d]", task->id);
 #endif
@@ -121,6 +122,7 @@ void before_task_exit () {
 
 void after_task_exit () {
     // put your customization here
+    printf("\n\nTask[%d] -- Execution time: %d ms || CPU time: %d ms\n\n", taskExec->id,systime() - taskExec->launch_timestamp, taskExec->running_time);
 #ifdef DEBUG
     printf("\ntask_exit - AFTER- [%d]", taskExec->id);
 #endif
