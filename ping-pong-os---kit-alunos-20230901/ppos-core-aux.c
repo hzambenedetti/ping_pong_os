@@ -9,6 +9,7 @@
 #include<sys/time.h>
 
 #define DEFAULT_TICKS 20
+#define INT_MAX (1 >> 31) - 1
 
 struct sigaction action;
 struct itimerval timer;
@@ -457,12 +458,19 @@ int after_mqueue_msgs (mqueue_t *queue) {
 }
 
 task_t * scheduler() {
-    // printf("\nHello from the scheduler!\n");
-    // FCFS scheduler
-    if ( readyQueue != NULL ) {
-        return readyQueue;
+  // printf("\nHello from the scheduler!\n");
+  int min = INT_MAX;
+  task_t* next = NULL;
+  task_t* iter = readyQueue;
+  task_t* queue_begin = iter;
+
+  while((iter != queue_begin || min == INT_MAX) && iter != NULL){
+    if(iter->ret < min){
+      next = iter;
+      min = next->ret;
     }
-    return NULL;
+  }
+  return next;
 }
 
 
