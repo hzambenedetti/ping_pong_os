@@ -9,6 +9,7 @@
 #include<sys/time.h>
 
 #define DEFAULT_TICKS 20
+#define DEFAULT_EET 100
 #define INT_MAX (1 >> 31) - 1
 
 struct sigaction action;
@@ -95,6 +96,8 @@ void before_task_create (task_t *task ) {
 void after_task_create (task_t *task ) {
     // put your customization here
     task->running_time = 0;
+    task->eet = DEFAULT_EET;
+    task->ret = DEFAULT_EET;
 #ifdef DEBUG
     printf("\ntask_create - AFTER - [%d]", task->id);
 #endif
