@@ -463,19 +463,20 @@ int after_mqueue_msgs (mqueue_t *queue) {
 }
 
 task_t * scheduler() {
-  int min = INT_MAX;
-  task_t* next = NULL;
-  task_t* iter = readyQueue;
-  task_t* queue_begin = iter;
+  task_t* scheduled = readyQueue;
+  task_t* queue_begin = scheduled;
+  task_t* iter = readyQueue->next;
 
-  while((iter != queue_begin || min == INT_MAX) && iter != NULL){
+
+  int min = queue_begin->ret;
+  while(iter != queue_begin && iter != NULL){
     if(iter->ret < min){
-      next = iter;
-      min = next->ret;
+      scheduled = iter;
+      min = scheduled->ret;
     }
     iter = iter->next;
   }
-  return next;
+  return scheduled;
 }
 
 
