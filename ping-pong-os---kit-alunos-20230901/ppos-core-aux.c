@@ -7,10 +7,10 @@
 // estruturas e funções
 #include<signal.h>
 #include<sys/time.h>
+#include<limits.h>
 
 #define DEFAULT_TICKS 20
 #define DEFAULT_EET 300
-#define INT_MAX 100000
 
 struct sigaction action;
 struct itimerval timer;
@@ -81,6 +81,8 @@ void before_ppos_init () {
 
 void after_ppos_init () {
     // put your customization here
+    taskExec->eet = INT_MAX - 1;
+    taskExec->ret = INT_MAX - 1;
 #ifdef DEBUG
     printf("\ninit - AFTER");
 #endif
@@ -461,7 +463,6 @@ int after_mqueue_msgs (mqueue_t *queue) {
 }
 
 task_t * scheduler() {
-  // printf("\nHello from the scheduler!\n");
   int min = INT_MAX;
   task_t* next = NULL;
   task_t* iter = readyQueue;
