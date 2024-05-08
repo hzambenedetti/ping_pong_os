@@ -70,8 +70,6 @@ int main (int argc, char *argv[])
   
   ppos_init () ;
 
-  task_t this = *taskExec;
-
   printf ("main: inicio\n");
 
   // waiting for the first microsecond
