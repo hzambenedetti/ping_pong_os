@@ -78,6 +78,10 @@ void after_task_switch ( task_t *task ) ; // Após o retorno dessa funcao, eh re
 // retorna o identificador da tarefa corrente (main deve ser 0)
 int task_id () ;
 
+//Funcoes implementadas pelos alunos...
+int task_get_eet(task_t* task);
+void task_set_eet(task_t* task, int time);
+
 // operações de escalonamento ==================================================
 
 // libera o processador para a próxima tarefa, retornando à fila de tarefas

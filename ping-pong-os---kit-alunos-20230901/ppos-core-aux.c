@@ -8,15 +8,20 @@
 #include<signal.h>
 #include<sys/time.h>
 
+#define DEFAULT_TICKS 20
+
 struct sigaction action;
 struct itimerval timer;
-int ticks = 200;
+int ticks = DEFAULT_TICKS;
 
 void tick_timer(){
   ticks--;
-  if (ticks < 1 && PPOS_IS_PREEMPT_ACTIVE){
+  systemTime++;
+  taskExec->running_time++;
+  taskExec->ret--;
+  if (ticks < 0 && PPOS_IS_PREEMPT_ACTIVE){
+    ticks = DEFAULT_TICKS;
     task_yield();
-    ticks = 500;
   }
 }
 
@@ -52,6 +57,7 @@ int task_get_eet(task_t* task){
 void task_set_eet(task_t* task, int time){
   if(task != NULL){
     task->eet = time;
+    task->ret = time;
   }
   else{
     taskExec->eet = time;
@@ -64,8 +70,8 @@ void task_set_eet(task_t* task, int time){
 
 void before_ppos_init () {
     // put your customization here
-  // setup_signal();
-  // setup_timer();
+  setup_signal();
+  setup_timer();
 #ifdef DEBUG
     printf("\ninit - BEFORE");
 #endif
