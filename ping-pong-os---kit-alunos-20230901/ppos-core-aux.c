@@ -531,23 +531,7 @@ int after_mqueue_msgs (mqueue_t *queue) {
 }
 
 task_t * scheduler() {
-  //avoid accessing fields of a null pointer..
-  if (readyQueue == NULL) return NULL;
-
-  task_t* scheduled = readyQueue;
-  task_t* queue_begin = scheduled;
-  task_t* iter = readyQueue->next;
-
-
-  int min = scheduled->ret;
-  while(iter != queue_begin && iter != NULL){
-    if(iter->ret < min){
-      scheduled = iter;
-      min = scheduled->ret;
-    }
-    iter = iter->next;
-  }
-  return scheduled;
+  return strf_scheduler();
 }
 
 
