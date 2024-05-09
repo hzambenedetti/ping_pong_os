@@ -47,7 +47,7 @@ void tick_preemp_timer(){
   ticks--;
   taskExec->running_time++;
   taskExec->ret--;
-  if (ticks < 0 && PPOS_IS_PREEMPT_ACTIVE){
+  if (ticks < 0 && PPOS_IS_PREEMPT_ACTIVE && !taskExec->sys_task){
     ticks = DEFAULT_TICKS;
     task_yield();
   }
