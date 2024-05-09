@@ -10,7 +10,7 @@
 #include<limits.h>
 
 #define DEFAULT_TICKS 20
-#define DEFAULT_EET 300
+#define DEFAULT_EET 99999
 
 struct sigaction action;
 struct itimerval timer;
