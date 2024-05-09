@@ -39,6 +39,12 @@ void task_set_sys_task(task_t* task);
 
 task_t* strf_scheduler();
 
+task_t* fcfs_scheduler();
+
+void preempt_task();
+
+void append_ready_queue(task_t* task);
+
 ///////////////////////////////// FUNCTION IMPLEMENTATION /////////////////////////////////
 
 void tick_sys_clock(){
@@ -52,7 +58,8 @@ void tick_preemp_timer(){
   taskExec->ret--;
   if (ticks < 0 && PPOS_IS_PREEMPT_ACTIVE && !taskExec->sys_task){
     ticks = DEFAULT_TICKS;
-    task_yield();
+    // task_yield();
+    preempt_task();
   }
 }
 
@@ -129,6 +136,33 @@ task_t* strf_scheduler(){
     iter = iter->next;
   }
   return scheduled;
+}
+
+task_t* fcfs_scheduler(){
+  return readyQueue;
+}
+
+void preempt_task(){
+  //1- get current running task 
+  task_t* running_task = taskExec;
+
+  //2- get dispatcher task
+  task_t* dispatcher = taskDisp;
+
+  //3- append current running task to end of queue 
+  append_ready_queue(running_task); 
+  
+  //4- switch task to dispatcher
+  task_switch(dispatcher);
+}
+
+void append_ready_queue(task_t* task){
+  task_t* last = readyQueue->prev;
+  last->next = task;
+  task->prev = last;
+  readyQueue->prev = task;
+  task->next = readyQueue;
+
 }
 
 // ****************************************************************************
@@ -531,7 +565,8 @@ int after_mqueue_msgs (mqueue_t *queue) {
 }
 
 task_t * scheduler() {
-  return strf_scheduler();
+  // return strf_scheduler();
+  return fcfs_scheduler();
 }
 
 
