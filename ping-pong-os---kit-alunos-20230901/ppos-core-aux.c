@@ -34,6 +34,8 @@ void task_set_eet(task_t* task, int time);
 
 int task_get_ret(task_t* task);
 
+void task_set_sys_task(task_t* task);
+
 ///////////////////////////////// FUNCTION IMPLEMENTATION /////////////////////////////////
 
 void tick_sys_clock(){
@@ -97,6 +99,13 @@ int task_get_ret(task_t* task){
     return task->ret;
   }
   return taskExec->ret;
+}
+
+void task_set_sys_task(task_t* task){
+  if (task != NULL)
+    task->sys_task = 1;
+  else
+   taskExec->sys_task = 1;
 }
 // ****************************************************************************
 
