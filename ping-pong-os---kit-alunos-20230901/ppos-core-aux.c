@@ -565,8 +565,7 @@ int after_mqueue_msgs (mqueue_t *queue) {
 }
 
 task_t * scheduler() {
-  // return strf_scheduler();
-  return fcfs_scheduler();
+  return strf_scheduler();
 }
 
 
