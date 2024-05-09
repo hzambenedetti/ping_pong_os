@@ -20,6 +20,7 @@ int ticks = DEFAULT_TICKS;
 
 ///////////////////////////////// FUNCTION DEFINITIONS /////////////////////////////////
 
+
 void tick_sys_clock();
 
 void tick_preemp_timer();
@@ -35,6 +36,8 @@ void task_set_eet(task_t* task, int time);
 int task_get_ret(task_t* task);
 
 void task_set_sys_task(task_t* task);
+
+task_t* strf_scheduler();
 
 ///////////////////////////////// FUNCTION IMPLEMENTATION /////////////////////////////////
 
@@ -107,6 +110,27 @@ void task_set_sys_task(task_t* task){
   else
    taskExec->sys_task = 1;
 }
+
+task_t* strf_scheduler(){
+  //avoid accessing fields of a null pointer..
+  if (readyQueue == NULL) return NULL;
+
+  task_t* scheduled = readyQueue;
+  task_t* queue_begin = scheduled;
+  task_t* iter = readyQueue->next;
+
+
+  int min = scheduled->ret;
+  while(iter != queue_begin && iter != NULL){
+    if(iter->ret < min){
+      scheduled = iter;
+      min = scheduled->ret;
+    }
+    iter = iter->next;
+  }
+  return scheduled;
+}
+
 // ****************************************************************************
 
 
