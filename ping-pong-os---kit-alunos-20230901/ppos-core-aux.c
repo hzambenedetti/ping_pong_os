@@ -12,13 +12,37 @@
 #define DEFAULT_TICKS 20
 #define DEFAULT_EET 99999
 
+///////////////////////////////// GLOBAL VARIABLES /////////////////////////////////
+
 struct sigaction action;
 struct itimerval timer;
 int ticks = DEFAULT_TICKS;
 
-void tick_timer(){
-  ticks--;
+///////////////////////////////// FUNCTION DEFINITIONS /////////////////////////////////
+
+void tick_sys_clock();
+
+void tick_preemp_timer();
+
+void setup_signal();
+
+void setup_timer();
+
+int task_get_eet(task_t* task);
+
+void task_set_eet(task_t* task, int time);
+
+int task_get_ret(task_t* task);
+
+///////////////////////////////// FUNCTION IMPLEMENTATION /////////////////////////////////
+
+void tick_sys_clock(){
   systemTime++;
+  tick_preemp_timer();
+}
+
+void tick_preemp_timer(){
+  ticks--;
   taskExec->running_time++;
   taskExec->ret--;
   if (ticks < 0 && PPOS_IS_PREEMPT_ACTIVE){
@@ -28,7 +52,7 @@ void tick_timer(){
 }
 
 void setup_signal(){
-  action.sa_handler = tick_timer;
+  action.sa_handler = tick_sys_clock;
   sigemptyset(&action.sa_mask);
   action.sa_flags = 0;
   if(sigaction(SIGALRM, &action, 0) < 0){
@@ -36,6 +60,7 @@ void setup_signal(){
     exit(1);
   }
 }
+
 
 void setup_timer(){
   timer.it_value.tv_usec = 1000; //1ms
@@ -67,7 +92,7 @@ void task_set_eet(task_t* task, int time){
   }
 }
 
-int task_get_ret(task_t* task, int ret){
+int task_get_ret(task_t* task){
   if(task != NULL){
     return task->ret;
   }
