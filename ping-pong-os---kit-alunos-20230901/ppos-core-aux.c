@@ -216,7 +216,10 @@ void before_task_exit () {
 
 void after_task_exit () {
     // put your customization here
-    printf("\n\nTask[%d] -- Execution time: %d ms || CPU time: %d ms\n\n", taskExec->id,systime() - taskExec->launch_timestamp, taskExec->running_time);
+    printf("\n\nTask[%d] -- Execution time: %d ms || CPU time: %d ms || activations: %d\n\n", 
+           taskExec->id,systime() - taskExec->launch_timestamp, 
+           taskExec->running_time,
+           taskExec->activations);
 #ifdef DEBUG
     printf("\ntask_exit - AFTER- [%d]", taskExec->id);
 #endif
