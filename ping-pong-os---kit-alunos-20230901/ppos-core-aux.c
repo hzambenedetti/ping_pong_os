@@ -200,6 +200,7 @@ void after_task_create (task_t *task ) {
     task->eet = DEFAULT_EET;
     task->ret = DEFAULT_EET;
     task->sys_task = 0;
+    task->activations = 0;
     task->launch_timestamp = systime();
 #ifdef DEBUG
     printf("\ntask_create - AFTER - [%d]", task->id);

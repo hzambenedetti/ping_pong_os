@@ -30,6 +30,7 @@ typedef struct task_t
    int ret;
    int launch_timestamp;
    unsigned char sys_task;
+   unsigned int activations;
 } task_t ;
 
 // estrutura que define um semáforo
