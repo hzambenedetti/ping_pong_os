@@ -11,6 +11,8 @@
 
 #define DEFAULT_TICKS 20
 #define DEFAULT_EET 99999
+#define MAX_PRIO -200
+#define MIN_PRIO 200
 
 ///////////////////////////////// GLOBAL VARIABLES /////////////////////////////////
 
@@ -44,6 +46,8 @@ task_t* fcfs_scheduler();
 void preempt_task();
 
 void append_ready_queue(task_t* task);
+
+void age_tasks();
 
 ///////////////////////////////// FUNCTION IMPLEMENTATION /////////////////////////////////
 
