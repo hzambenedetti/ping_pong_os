@@ -43,6 +43,8 @@ task_t* strf_scheduler();
 
 task_t* fcfs_scheduler();
 
+task_t* priod_scheduler();
+
 void preempt_task();
 
 void append_ready_queue(task_t* task);
@@ -144,6 +146,25 @@ task_t* strf_scheduler(){
 
 task_t* fcfs_scheduler(){
   return readyQueue;
+}
+
+task_t* priod_scheduler(){
+  if (readyQueue == NULL) return NULL;
+
+  task_t* scheduled = readyQueue;
+  task_t* queue_begin = scheduled;
+  task_t* iter = readyQueue->next;
+
+
+  int min = scheduled->dyn_prio;
+  while(iter != queue_begin){
+    if(iter->dyn_prio < min){
+      scheduled = iter;
+      min = scheduled->dyn_prio;
+    }
+    iter = iter->next;
+  }
+  return scheduled;
 }
 
 void preempt_task(){
