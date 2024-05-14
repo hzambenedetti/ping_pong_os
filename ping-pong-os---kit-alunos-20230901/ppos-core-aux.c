@@ -35,6 +35,8 @@ int task_get_eet(task_t* task);
 
 void task_set_eet(task_t* task, int time);
 
+void task_set_prio(task_t* task, int prio);
+
 int task_get_ret(task_t* task);
 
 void task_set_sys_task(task_t* task);
@@ -107,6 +109,17 @@ void task_set_eet(task_t* task, int time){
   else{
     taskExec->eet = time;
     taskExec->ret = time;
+  }
+}
+
+void task_set_prio(task_t* task, int prio){
+  if(task != NULL){
+    task->static_prio = prio;
+    task->dyn_prio = prio;
+  }
+  else{
+    taskExec->static_prio = prio;
+    taskExec->dyn_prio = prio;
   }
 }
 
