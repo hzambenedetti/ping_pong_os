@@ -169,6 +169,19 @@ void append_ready_queue(task_t* task){
 
 }
 
+void age_tasks(){
+  if(readyQueue != NULL){
+    task_t* iter = readyQueue->next;
+    task_t* begin = readyQueue;
+
+    begin->dyn_prio--;
+    while(iter != begin){
+      iter->dyn_prio--;
+      iter = iter->next;
+    }
+  }
+}
+
 // ****************************************************************************
 
 
