@@ -39,7 +39,7 @@ int disk_sig_flag;
 
 void append_disk_task(disk_task_t* task);
 
-void append_ready_queue(task_t* task);
+void disk_append_ready_queue(task_t* task);
 
 void task_suspend_disk(task_t* task);
 
@@ -60,7 +60,7 @@ void disk_manager(void* args){
       task_t* ready_task = pop_suspend_queue();
       
       //wake up task
-      append_ready_queue(ready_task);
+      disk_append_ready_queue(ready_task);
     }
     
     int disk_idle = disk_cmd(DISK_CMD_STATUS, 0 ,0) == DISK_STATUS_IDLE;
@@ -242,7 +242,7 @@ disk_task_t* pop_disk_queue(){
   return popped;
 }
 
-void append_ready_queue(task_t* task){
+void disk_append_ready_queue(task_t* task){
   task_t* last = readyQueue->prev;
   last->next = task;
   task->prev = last;

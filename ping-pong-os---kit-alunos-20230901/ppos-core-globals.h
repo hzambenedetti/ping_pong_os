@@ -1,6 +1,8 @@
 #ifndef __PPOS_CORE_GLOBALS__
 #define __PPOS_CORE_GLOBALS__
 
+#include "ppos_data.h"
+
 // Declaracao das variaveis globais usadas no PPOS
 extern task_t* taskMain;  // Representa a funcao the main()
 extern task_t* taskExec; // Ponteiro para a TCB da tarefa em execucao
