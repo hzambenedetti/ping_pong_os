@@ -15,8 +15,10 @@
 typedef struct
 {
   // completar com os campos necessarios
-
 } disk_t ;
+
+
+void disk_manager(void* args);
 
 // inicializacao do gerente de disco
 // retorna -1 em erro ou 0 em sucesso
@@ -29,5 +31,7 @@ int disk_block_read (int block, void *buffer) ;
 
 // escrita de um bloco, do buffer para o disco
 int disk_block_write (int block, void *buffer) ;
+
+void disk_sig_handler();
 
 #endif
