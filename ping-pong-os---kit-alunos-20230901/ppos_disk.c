@@ -200,7 +200,7 @@ void append_disk_task(disk_task_t* task){
   }
   
   disk_task_t* it = disk_task_queue;
-  while(it->next == NULL){
+  while(it->next != NULL){
     it = it->next;
   }
 
@@ -215,7 +215,7 @@ void task_suspend_disk(task_t* task){
   }
   
   task_t* it = disk_suspended_queue;
-  while(it->next == NULL){
+  while(it->next != NULL){
     it = it->next;
   }
 
