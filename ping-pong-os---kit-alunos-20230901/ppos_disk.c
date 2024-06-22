@@ -26,9 +26,9 @@ task_t* disk_suspended_queue;
 task_t* disk_mgr_task;
 disk_task_t* disk_task_queue;
 
-semaphore_t* disk_mgr_sem;
-semaphore_t* disk_sem;
-semaphore_t* disk_task_sem;
+semaphore_t disk_mgr_sem;
+semaphore_t disk_sem;
+semaphore_t disk_task_sem;
 
 disk_t* disk;
 
@@ -53,7 +53,7 @@ void disk_manager(void* args){
 
   while(1){
     //take exclusive control over disk
-    sem_down(disk_task_sem);
+    sem_down(&disk_task_sem);
     
     //if a disk operation was completed
     if(disk_sig_flag){
@@ -75,10 +75,10 @@ void disk_manager(void* args){
     }
     
     //release control over disk
-    sem_up(disk_task_sem);
+    sem_up(&disk_task_sem);
 
     //suspend disk_manager until a task raises the semaphore
-    sem_down(disk_mgr_sem);
+    sem_down(&disk_mgr_sem);
    
   }
 }
@@ -97,13 +97,13 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   disk_sig_flag = 0;
 
   // create disk_semaphore
-  if (sem_create(disk_sem, 1) < 0){return -1;}
+  if (sem_create(&disk_sem, 1) < 0){return -1;}
 
   //create disk_mgr_semaphore
-  if (sem_create(disk_mgr_sem, 0) < 0){return -1;}
+  if (sem_create(&disk_mgr_sem, 0) < 0){return -1;}
   
   //create disk_task_sem
-  if(sem_create(disk_task_sem, 1) < 0){return -1;}
+  if(sem_create(&disk_task_sem, 1) < 0){return -1;}
   
   //setup signal handler
   if(disk_sig_handler_setup() < 0){ return -1;} 
@@ -138,7 +138,7 @@ int disk_block_read(int block, void *buffer){
   append_disk_task(d_task);
   
   //call disk_manager task
-  sem_up(disk_mgr_sem); 
+  sem_up(&disk_mgr_sem); 
   
   //suspends task until disk block is read
   task_suspend_disk(taskExec);
@@ -164,7 +164,7 @@ int disk_block_write(int block, void *buffer){
   append_disk_task(d_task);
   
   //call disk_manager task
-  sem_up(disk_mgr_sem); 
+  sem_up(&disk_mgr_sem); 
   
   //suspends task until disk block is read
   task_suspend_disk(taskExec);
@@ -188,7 +188,7 @@ void disk_sig_handler(){
   disk_sig_flag = 1;
 
   //wake disk_manager
-  sem_up(disk_mgr_sem);
+  sem_up(&disk_mgr_sem);
 }
 
 void append_disk_task(disk_task_t* task){
