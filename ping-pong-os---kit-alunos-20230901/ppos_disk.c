@@ -23,12 +23,13 @@ typedef struct disk_task_t{
 //============================= GLOBALS =================================== // 
 
 task_t* disk_suspended_queue;
-task_t* disk_mgr_task;
 disk_task_t* disk_task_queue;
 
 semaphore_t disk_mgr_sem;
 semaphore_t disk_sem;
 semaphore_t disk_task_sem;
+
+task_t disk_mgr_task;
 
 disk_t* disk;
 
@@ -109,7 +110,7 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   if(disk_sig_handler_setup() < 0){ return -1;} 
   
   //launch disk_manager task
-  if(task_create(disk_mgr_task, disk_manager, NULL) < 0){return -1;}
+  if(task_create(&disk_mgr_task, disk_manager, NULL) < 0){return -1;}
 
   //init disk 
   if (disk_cmd(DISK_CMD_INIT, 0, 0) < 0){return -1;};
