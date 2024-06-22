@@ -45,7 +45,7 @@ void task_suspend_disk(task_t* task);
 void disk_manager(void* args){
   
   while(1){
-
+    
   }
 }
 
@@ -114,10 +114,26 @@ int disk_block_read(int block, void *buffer){
 }
 
 int disk_block_write(int block, void *buffer){
-  //Appends write task to disk task queue
+  //create disk_task
+  disk_task_t* d_task = (disk_task_t*) malloc(sizeof(disk_task_t));
+  
+  //set disk task values
+  d_task->task = taskExec;
+  d_task->buffer = buffer;
+  d_task->op = DISK_CMD_WRITE;
+  d_task->next = NULL;
+  d_task->prev = NULL;
 
-  //suspends task until disk block is written 
-
+  //Appends disk read task to disk task queue 
+  append_disk_task(d_task);
+  
+  //call disk_manager task
+  sem_up(disk_mgr_sem); 
+  
+  //suspends task until disk block is read
+  task_suspend_disk(taskExec);
+  task_switch(taskDisp);
+  
   //return operation status
   return 0;
 }
