@@ -23,8 +23,11 @@ typedef struct{
 task_t* disk_suspended_queue;
 task_t* disk_mgr_task;
 disk_task_t* disk_task_queue;
+
 semaphore_t* disk_mgr_sem;
 semaphore_t* disk_sem;
+semaphore_t* disk_task_sem;
+
 disk_t* disk;
 
 struct sigaction disk_sig;
@@ -57,9 +60,11 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   //create disk_mgr_semaphore
   if (sem_create(disk_mgr_sem, 0) < 0){return -1;}
   
+  //create disk_task_sem
+  if(sem_create(disk_task_sem, 1) < 0){return -1;}
+  
   //setup signal handler
   if(disk_sig_handler_setup() < 0){ return -1;} 
-
   
   //launch disk_manager task
   if(task_create(disk_mgr_task, disk_manager, NULL) < 0){return -1;}
