@@ -44,6 +44,7 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   //1- disk_task_queue
   //2- disk_semaphore
   //3- disk_manager_semaphore
+  //4- init disk
 
   //disk_suspended_queue
   disk_suspended_queue = NULL;
