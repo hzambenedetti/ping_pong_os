@@ -5,8 +5,8 @@
 #include "ppos.h"
 #include "disk.h"
 
-#define DISK_BLOCK_SIZE 64
-#define DISK_SIZE 256
+// #define DISK_BLOCK_SIZE 64
+// #define DISK_SIZE 256
 
 //============================= STRUCTS =================================== // 
 
@@ -60,13 +60,17 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   //setup signal handler
   if(disk_sig_handler_setup() < 0){ return -1;} 
 
-  //attribute values to numblocks and blockSize
-  *numblocks = DISK_SIZE;
-  *blockSize = DISK_BLOCK_SIZE;
   
   //launch disk_manager task
-  if(task_create(disk_mgr_task, disk_manager, NULL) < 0){return -1;} 
+  if(task_create(disk_mgr_task, disk_manager, NULL) < 0){return -1;}
 
+  //init disk 
+  if (disk_cmd(DISK_CMD_INIT, 0, 0) < 0){return -1;};
+
+  //attribute values to numblocks and blockSize
+  *numblocks = disk_cmd(DISK_CMD_DISKSIZE, 0, 0);
+  *blockSize = disk_cmd(DISK_CMD_BLOCKSIZE, 0, 0);
+  
   //return operation status
   return 0;
 }
