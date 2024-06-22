@@ -1,3 +1,5 @@
+#include<signal.h>
+
 #include "ppos_disk.h"
 #include "ppos_data.h"
 #include "ppos.h"
@@ -25,6 +27,8 @@ semaphore_t* disk_mgr_sem;
 semaphore_t* disk_sem;
 disk_t* disk;
 
+struct sigaction disk_sig;
+
 //============================= GLOBALS =================================== // 
 
 void disk_manager(void* args){
@@ -46,17 +50,13 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   disk_task_queue = NULL;
 
   // create disk_semaphore
-  if (sem_create(disk_sem, 0) < 0){
-    return -1;
-  }
+  if (sem_create(disk_sem, 0) < 0){return -1;}
 
   //create disk_mgr_semaphore
-  if (sem_create(disk_mgr_sem, 0) < 0){
-    return -1; 
-  }
+  if (sem_create(disk_mgr_sem, 0) < 0){return -1;}
   
   //setup signal handler
-  disk_sig_handler_setup(); 
+  if(disk_sig_handler_setup() < 0){ return -1;} 
 
   //attribute values to numblocks and blockSize
   *numblocks = DISK_SIZE;
@@ -87,8 +87,13 @@ int disk_block_write(int block, void *buffer){
   return 0;
 }
 
-void disk_sig_handler_setup(){
-
+int disk_sig_handler_setup(){
+  disk_sig.sa_handler = disk_sig_handler;
+  sigemptyset(&disk_sig.sa_mask);
+  disk_sig.sa_flags = 0;
+  
+  if(sigaction(SIGUSR1, &disk_sig, 0) < 0){return -1;}
+  return 0;
 }
 
 void disk_sig_handler(){

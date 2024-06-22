@@ -34,6 +34,6 @@ int disk_block_write (int block, void *buffer) ;
 
 void disk_sig_handler();
 
-void disk_sig_handler_setup();
+int disk_sig_handler_setup();
 
 #endif
