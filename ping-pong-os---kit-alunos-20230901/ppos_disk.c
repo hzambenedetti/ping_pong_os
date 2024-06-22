@@ -15,6 +15,7 @@ typedef struct disk_task_t{
   task_t* task;
   int op;
   void* buffer;
+  int block;
   struct disk_task_t* prev;
   struct disk_task_t* next;
 } disk_task_t;
@@ -135,6 +136,7 @@ int disk_block_read(int block, void *buffer){
   d_task->task = taskExec;
   d_task->buffer = buffer;
   d_task->op = DISK_CMD_READ;
+  d_task->block = block;
   d_task->next = NULL;
   d_task->prev = NULL;
 
@@ -160,6 +162,7 @@ int disk_block_write(int block, void *buffer){
   d_task->task = taskExec;
   d_task->buffer = buffer;
   d_task->op = DISK_CMD_WRITE;
+  d_task->block = block;
   d_task->next = NULL;
   d_task->prev = NULL;
 
