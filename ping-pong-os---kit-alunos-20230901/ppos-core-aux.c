@@ -57,7 +57,7 @@ void age_tasks();
 
 void tick_sys_clock(){
   systemTime++;
-  tick_preemp_timer();
+  // tick_preemp_timer();
 }
 
 void tick_preemp_timer(){
