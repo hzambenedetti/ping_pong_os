@@ -11,7 +11,7 @@
 
 //============================= STRUCTS =================================== // 
 
-typedef struct{
+typedef struct disk_task_t{
   task_t* task;
   int op;
   void* buffer;
@@ -137,4 +137,19 @@ void disk_sig_handler(){
 
   //wake disk_manager
   sem_up(disk_mgr_sem);
+}
+
+void append_disk_task(disk_task_t* task){
+  if (disk_task_queue == NULL){
+    disk_task_queue = task;
+    return;
+  }
+  
+  disk_task_t* it = disk_task_queue;
+  while(it->next == NULL){
+    it = it->next;
+  }
+
+  it->next = task;
+  task->prev = it;
 }
