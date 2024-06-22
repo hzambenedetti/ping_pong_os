@@ -53,7 +53,7 @@ void disk_manager(void* args){
 
   while(1){
     //take exclusive control over disk
-    sem_down(disk_sem);
+    sem_down(disk_task_sem);
     
     //if a disk operation was completed
     if(disk_sig_flag){
@@ -65,9 +65,6 @@ void disk_manager(void* args){
     
     int disk_idle = disk_cmd(DISK_CMD_STATUS, 0 ,0) == DISK_STATUS_IDLE;
     if(disk_idle && disk_task_queue != NULL){
-      //take exclusive control over queue 
-      sem_down(disk_task_sem);
-      
       disk_task_t* next_task = disk_task_queue;
 
       //launch next disk task
@@ -75,13 +72,10 @@ void disk_manager(void* args){
         //if task was launched, remove head of queue
         pop_disk_queue();
       }
-      
-      //release control over queue semaphore
-      sem_up(disk_task_sem);
     }
     
     //release control over disk
-    sem_up(disk_sem);
+    sem_up(disk_task_sem);
 
     //suspend disk_manager until a task raises the semaphore
     sem_down(disk_mgr_sem);
