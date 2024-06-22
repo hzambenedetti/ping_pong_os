@@ -245,6 +245,13 @@ disk_task_t* pop_disk_queue(){
 }
 
 void disk_append_ready_queue(task_t* task){
+  if(readyQueue == NULL){
+    readyQueue = task;
+    readyQueue->next = readyQueue;
+    readyQueue->prev = readyQueue;
+    return;
+  }
+
   task_t* last = readyQueue->prev;
   last->next = task;
   task->prev = last;
