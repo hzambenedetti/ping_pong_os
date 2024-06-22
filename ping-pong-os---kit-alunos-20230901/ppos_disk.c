@@ -28,7 +28,7 @@ semaphore_t* disk_sem;
 disk_t* disk;
 
 struct sigaction disk_sig;
-
+int disk_sig_flag;
 //============================= GLOBALS =================================== // 
 
 void disk_manager(void* args){
@@ -48,9 +48,10 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   //disk_suspended_queue
   disk_suspended_queue = NULL;
   disk_task_queue = NULL;
+  disk_sig_flag = 0;
 
   // create disk_semaphore
-  if (sem_create(disk_sem, 0) < 0){return -1;}
+  if (sem_create(disk_sem, 1) < 0){return -1;}
 
   //create disk_mgr_semaphore
   if (sem_create(disk_mgr_sem, 0) < 0){return -1;}
@@ -97,5 +98,9 @@ int disk_sig_handler_setup(){
 }
 
 void disk_sig_handler(){
+  //raise signal flag
+  disk_sig_flag = 1;
 
+  //wake disk_manager
+  sem_up(disk_mgr_sem);
 }
