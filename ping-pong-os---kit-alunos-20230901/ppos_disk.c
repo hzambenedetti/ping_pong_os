@@ -1,6 +1,7 @@
 #include<signal.h>
 
 #include "ppos_disk.h"
+#include "ppos-core-globals.h"
 #include "ppos_data.h"
 #include "ppos.h"
 #include "disk.h"
@@ -32,7 +33,14 @@ disk_t* disk;
 
 struct sigaction disk_sig;
 int disk_sig_flag;
-//============================= GLOBALS =================================== // 
+
+//============================= FUNCTION DEFINITIONS =================================== // 
+
+void append_disk_task(disk_task_t* task);
+
+void task_suspend_disk(task_t* task);
+
+//============================= FUNCTION IMPLEMENTATION =================================== // 
 
 void disk_manager(void* args){
   
@@ -81,9 +89,25 @@ int disk_mgr_init(int *numblocks, int *blockSize){
 }
 
 int disk_block_read(int block, void *buffer){
-  //Appends disk read task to disk task queue 
+  //create disk_task
+  disk_task_t* d_task = (disk_task_t*) malloc(sizeof(disk_task_t));
+  
+  //set disk task values
+  d_task->task = taskExec;
+  d_task->buffer = buffer;
+  d_task->op = DISK_CMD_READ;
+  d_task->next = NULL;
+  d_task->prev = NULL;
 
-  //suspends task until disk block is read 
+  //Appends disk read task to disk task queue 
+  append_disk_task(d_task);
+  
+  //call disk_manager task
+  sem_up(disk_mgr_sem); 
+  
+  //suspends task until disk block is read
+  task_suspend_disk(taskExec);
+  task_switch(taskDisp);
 
   //return status of operation
   return 0;
