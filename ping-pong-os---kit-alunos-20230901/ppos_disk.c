@@ -223,3 +223,32 @@ void task_suspend_disk(task_t* task){
   it->next = task;
   task->prev = it;
 }
+
+task_t* pop_suspend_queue(){
+  if(disk_suspended_queue == NULL){
+    return NULL;
+  }
+
+  task_t* popped = disk_suspended_queue;
+  disk_suspended_queue = disk_suspended_queue->next;
+  return popped;
+}
+
+disk_task_t* pop_disk_queue(){
+  if(disk_task_queue == NULL){
+    return NULL;
+  }
+
+  disk_task_t* popped = disk_task_queue;
+  disk_task_queue = disk_task_queue->next;
+
+  return popped;
+}
+
+void append_ready_queue(task_t* task){
+  task_t* last = readyQueue->prev;
+  last->next = task;
+  task->prev = last;
+  readyQueue->prev = task;
+  task->next = readyQueue;
+}
