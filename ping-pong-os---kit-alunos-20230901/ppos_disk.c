@@ -153,3 +153,18 @@ void append_disk_task(disk_task_t* task){
   it->next = task;
   task->prev = it;
 }
+
+void task_suspend_disk(task_t* task){
+  if(disk_suspended_queue == NULL){
+    disk_suspended_queue = task;
+    return;
+  }
+  
+  task_t* it = disk_suspended_queue;
+  while(it->next == NULL){
+    it = it->next;
+  }
+
+  it->next = task;
+  task->prev = it;
+}
