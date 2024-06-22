@@ -59,9 +59,10 @@ void disk_manager(void* args){
     //if a disk operation was completed
     if(disk_sig_flag){
       task_t* ready_task = pop_suspend_queue();
-      
+
       //wake up task
       disk_append_ready_queue(ready_task);
+      disk_sig_flag = 0;
     }
     
     int disk_idle = disk_cmd(DISK_CMD_STATUS, 0 ,0) == DISK_STATUS_IDLE;
@@ -71,7 +72,7 @@ void disk_manager(void* args){
       //launch next disk task
       if(disk_cmd(next_task->op, next_task->block, next_task->buffer) >= 0){
         //if task was launched, remove head of queue
-        pop_disk_queue();
+        free(pop_disk_queue());
       }
     }
     
