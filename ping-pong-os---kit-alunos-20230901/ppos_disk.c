@@ -38,14 +38,53 @@ int disk_sig_flag;
 
 void append_disk_task(disk_task_t* task);
 
+void append_ready_queue(task_t* task);
+
 void task_suspend_disk(task_t* task);
+
+task_t* pop_suspend_queue();
+
+disk_task_t* pop_disk_queue();
 
 //============================= FUNCTION IMPLEMENTATION =================================== // 
 
 void disk_manager(void* args){
-  
+
   while(1){
+    //take exclusive control over disk
+    sem_down(disk_sem);
     
+    //if a disk operation was completed
+    if(disk_sig_flag){
+      task_t* ready_task = pop_suspend_queue();
+      
+      //wake up task
+      append_ready_queue(ready_task);
+    }
+    
+    int disk_idle = disk_cmd(DISK_CMD_STATUS, 0 ,0) == DISK_STATUS_IDLE;
+    if(disk_idle && disk_task_queue != NULL){
+      //take exclusive control over queue 
+      sem_down(disk_task_sem);
+      
+      disk_task_t* next_task = disk_task_queue;
+
+      //launch next disk task
+      if(disk_cmd(next_task->op, next_task->block, next_task->buffer) >= 0){
+        //if task was launched, remove head of queue
+        pop_disk_queue();
+      }
+      
+      //release control over queue semaphore
+      sem_up(disk_task_sem);
+    }
+    
+    //release control over disk
+    sem_up(disk_sem);
+
+    //suspend disk_manager until a task raises the semaphore
+    sem_down(disk_mgr_sem);
+   
   }
 }
 
