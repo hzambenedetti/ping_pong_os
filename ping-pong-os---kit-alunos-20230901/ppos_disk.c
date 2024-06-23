@@ -87,11 +87,14 @@ void disk_manager(void* args){
 
 
 int disk_mgr_init(int *numblocks, int *blockSize){
+
   //initiate disk manager
   //1- disk_task_queue
   //2- disk_semaphore
   //3- disk_manager_semaphore
   //4- init disk
+  
+  PPOS_PREEMPT_DISABLE;
 
   //disk_suspended_queue
   disk_suspended_queue = NULL;
@@ -121,6 +124,8 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   //attribute values to numblocks and blockSize
   *numblocks = disk_cmd(DISK_CMD_DISKSIZE, 0, 0);
   *blockSize = disk_cmd(DISK_CMD_BLOCKSIZE, 0, 0);
+
+  PPOS_PREEMPT_ENABLE;
   
   //return operation status
   return 0;
