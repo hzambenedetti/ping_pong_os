@@ -17,6 +17,7 @@ typedef struct disk_task_t{
   void* buffer;
   int block;
   long launch_time;
+  long start_time;
   struct disk_task_t* prev;
   struct disk_task_t* next;
 } disk_task_t;
@@ -74,7 +75,7 @@ void disk_manager(void* args){
 
       //get stats 
       disk.total_steps += abs(disk.head_pos - current_disk_task->block);
-      disk.total_time += systime() - current_disk_task->launch_time;
+      disk.total_time += systime() - current_disk_task->start_time;
       disk.head_pos = current_disk_task->block;
       
       //dealocate current_disk_task 
@@ -90,6 +91,7 @@ void disk_manager(void* args){
       if(disk_cmd(next_task->op, next_task->block, next_task->buffer) >= 0){
         //if task was launched, remove head of queue
         current_disk_task = pop_disk_queue();
+        current_disk_task->start_time = systime();
       }
     }
     
