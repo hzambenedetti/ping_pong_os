@@ -89,7 +89,7 @@ void disk_manager(void* args){
     
     int disk_idle = disk_cmd(DISK_CMD_STATUS, 0 ,0) == DISK_STATUS_IDLE;
     if(disk_idle && disk_task_queue != NULL){
-      disk_task_t* next_task = sstf_disk_scheduler();
+      disk_task_t* next_task = cscan_disk_scheduler();
 
       //launch next disk task
       if(disk_cmd(next_task->op, next_task->block, next_task->buffer) >= 0){
@@ -341,6 +341,45 @@ disk_task_t* sstf_disk_scheduler(){
     it = it->next;
   }
 
+  return selected;
+}
+
+disk_task_t* cscan_disk_scheduler(){
+  if(disk_task_queue == NULL){
+    return NULL;
+  }
+  
+  disk_task_t* selected = NULL;
+  int distance = disk.num_blocks + 100;
+
+  disk_task_t* it = disk_task_queue;
+  
+  //search for the request closest to the disk's head such that
+  // request->block > disk.head_pos
+  while(it != NULL){
+    if(it->block - disk.head_pos < distance && it->block > disk.head_pos){
+      selected = it;
+      distance = it->block - disk.head_pos;
+    }
+    it = it->next;
+  }
+  
+  //if there is such a request, return it...
+  if (selected != NULL){
+    return selected;
+  }
+
+  //else, find the request whose block is the closest to the disk's beginning
+  selected = disk_task_queue;
+  it = disk_task_queue->next;
+  while(it != NULL){
+    if(it->block < selected->block){
+      selected = it;
+      distance = it->block;
+    }
+    it = it->next;
+  }
+  
   return selected;
 }
 
