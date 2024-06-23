@@ -89,7 +89,7 @@ void disk_manager(void* args){
     
     int disk_idle = disk_cmd(DISK_CMD_STATUS, 0 ,0) == DISK_STATUS_IDLE;
     if(disk_idle && disk_task_queue != NULL){
-      disk_task_t* next_task = fcfs_disk_scheduler();
+      disk_task_t* next_task = sstf_disk_scheduler();
 
       //launch next disk task
       if(disk_cmd(next_task->op, next_task->block, next_task->buffer) >= 0){
@@ -320,6 +320,28 @@ void disk_append_ready_queue(task_t* task){
 
 disk_task_t* fcfs_disk_scheduler(){
   return disk_task_queue;
+}
+
+disk_task_t* sstf_disk_scheduler(){
+  if (disk_task_queue == NULL){
+    return NULL;
+  }
+
+  disk_task_t* selected = disk_task_queue;
+  disk_task_t* it = disk_task_queue->next;
+
+  int distance = abs(selected->block - disk.head_pos);
+ 
+  //find the request with the closest block
+  while(it != NULL){
+    if(abs(it->block - disk.head_pos) < distance){
+      selected = it;
+      distance = abs(it->block - disk.head_pos);
+    }
+    it = it->next;
+  }
+
+  return selected;
 }
 
 //============================= AUX FUNCTIONS =================================== //
