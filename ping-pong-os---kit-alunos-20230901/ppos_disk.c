@@ -59,7 +59,7 @@ disk_task_t* sstf_disk_scheduler();
 
 disk_task_t* cscan_disk_scheduler();
 
-disk_task_t* fcfs_scheduler();
+disk_task_t* fcfs_disk_scheduler();
 
 //============================= FUNCTION IMPLEMENTATION =================================== // 
 
@@ -71,7 +71,8 @@ void disk_manager(void* args){
     
     //if a disk operation was completed
     if(disk_sig_flag){
-      task_t* ready_task = pop_suspend_queue();
+      //remove the current_task_owner from the disk_suspended_queue 
+      task_t* ready_task = remove_node_suspended(current_disk_task->task);
 
       //wake up task
       disk_append_ready_queue(ready_task);
@@ -84,17 +85,17 @@ void disk_manager(void* args){
       
       //dealocate current_disk_task 
       free(current_disk_task);
-
     }
     
     int disk_idle = disk_cmd(DISK_CMD_STATUS, 0 ,0) == DISK_STATUS_IDLE;
     if(disk_idle && disk_task_queue != NULL){
-      disk_task_t* next_task = disk_task_queue;
+      disk_task_t* next_task = fcfs_disk_scheduler();
 
       //launch next disk task
       if(disk_cmd(next_task->op, next_task->block, next_task->buffer) >= 0){
-        //if task was launched, remove head of queue
-        current_disk_task = pop_disk_queue();
+        //if task was launched, remove task from queue
+        //and assign it to the current_disk_task
+        current_disk_task = remove_node_disk(next_task);
         current_disk_task->start_time = systime();
       }
     }
@@ -318,7 +319,7 @@ void disk_append_ready_queue(task_t* task){
 //============================= SCHEDULERS IMPLEMENTATION =================================== //
 
 disk_task_t* fcfs_scheduler(){
-
+  return disk_task_queue;
 }
 
 //============================= AUX FUNCTIONS =================================== //
