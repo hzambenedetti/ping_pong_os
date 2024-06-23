@@ -162,8 +162,6 @@ int disk_mgr_init(int *numblocks, int *blockSize){
 }
 
 int disk_block_read(int block, void *buffer){
-  PPOS_PREEMPT_DISABLE
-
   //create disk_task
   disk_task_t* d_task = (disk_task_t*) malloc(sizeof(disk_task_t));
   
@@ -182,17 +180,15 @@ int disk_block_read(int block, void *buffer){
   //Appends disk read task to disk task queue 
   append_disk_task(d_task);
   
+  //suspends task until disk block is read
+  task_suspend_disk(taskExec);
+  
   //realeses disk queue semaphore 
   sem_up(&disk_task_sem);
 
   //call disk_manager task
   sem_up(&disk_mgr_sem); 
   
-  //suspends task until disk block is read
-  task_suspend_disk(taskExec);
-
-  PPOS_PREEMPT_ENABLE
-
   task_switch(taskDisp);
 
   //return status of operation
@@ -200,8 +196,6 @@ int disk_block_read(int block, void *buffer){
 }
 
 int disk_block_write(int block, void *buffer){
-  PPOS_PREEMPT_DISABLE
-
   //create disk_task
   disk_task_t* d_task = (disk_task_t*) malloc(sizeof(disk_task_t));
   
@@ -220,16 +214,15 @@ int disk_block_write(int block, void *buffer){
   //Appends disk read task to disk task queue 
   append_disk_task(d_task);
   
+  //suspends task until disk block is read
+  task_suspend_disk(taskExec);
+  
   //realeses disk queue semaphore 
   sem_up(&disk_task_sem);
   
   //call disk_manager task
   sem_up(&disk_mgr_sem); 
-  
-  //suspends task until disk block is read
-  task_suspend_disk(taskExec);
 
-  PPOS_PREEMPT_ENABLE
   task_switch(taskDisp);
   
   //return operation status
