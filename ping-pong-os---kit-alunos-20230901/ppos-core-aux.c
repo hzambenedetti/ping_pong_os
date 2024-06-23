@@ -287,6 +287,7 @@ void before_task_switch ( task_t *task ) {
 
 void after_task_switch ( task_t *task ) {
     // put your customization here
+    ticks = DEFAULT_TICKS;
     task->activations++;
     task->dyn_prio = task->static_prio;
 #ifdef DEBUG
