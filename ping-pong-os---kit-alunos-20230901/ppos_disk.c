@@ -318,7 +318,7 @@ void disk_append_ready_queue(task_t* task){
 
 //============================= SCHEDULERS IMPLEMENTATION =================================== //
 
-disk_task_t* fcfs_scheduler(){
+disk_task_t* fcfs_disk_scheduler(){
   return disk_task_queue;
 }
 
