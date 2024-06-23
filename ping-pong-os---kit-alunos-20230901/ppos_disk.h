@@ -14,7 +14,11 @@
 // estrutura que representa um disco no sistema operacional
 typedef struct
 {
-  // completar com os campos necessarios
+  int num_blocks;
+  int block_size;
+  int head_pos;
+  int total_steps;
+  int total_time;
 } disk_t ;
 
 
