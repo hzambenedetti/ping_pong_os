@@ -16,6 +16,7 @@ typedef struct disk_task_t{
   int op;
   void* buffer;
   int block;
+  long launch_time;
   struct disk_task_t* prev;
   struct disk_task_t* next;
 } disk_task_t;
@@ -24,6 +25,7 @@ typedef struct disk_task_t{
 
 task_t* disk_suspended_queue;
 disk_task_t* disk_task_queue;
+disk_task_t* current_disk_task;
 
 semaphore_t disk_mgr_sem;
 semaphore_t disk_sem;
@@ -69,6 +71,15 @@ void disk_manager(void* args){
       //wake up task
       disk_append_ready_queue(ready_task);
       disk_sig_flag = 0;
+
+      //get stats 
+      disk.total_steps += abs(disk.head_pos - current_disk_task->block);
+      disk.total_time += systime() - current_disk_task->launch_time;
+      disk.head_pos = current_disk_task->block;
+      
+      //dealocate current_disk_task 
+      free(current_disk_task);
+
     }
     
     int disk_idle = disk_cmd(DISK_CMD_STATUS, 0 ,0) == DISK_STATUS_IDLE;
@@ -78,7 +89,7 @@ void disk_manager(void* args){
       //launch next disk task
       if(disk_cmd(next_task->op, next_task->block, next_task->buffer) >= 0){
         //if task was launched, remove head of queue
-        free(pop_disk_queue());
+        current_disk_task = pop_disk_queue();
       }
     }
     
@@ -152,6 +163,7 @@ int disk_block_read(int block, void *buffer){
   d_task->task = taskExec;
   d_task->buffer = buffer;
   d_task->op = DISK_CMD_READ;
+  d_task->launch_time = systime();
   d_task->block = block;
   d_task->next = NULL;
   d_task->prev = NULL;
@@ -183,6 +195,7 @@ int disk_block_write(int block, void *buffer){
   d_task->task = taskExec;
   d_task->buffer = buffer;
   d_task->op = DISK_CMD_WRITE;
+  d_task->launch_time = systime();
   d_task->block = block;
   d_task->next = NULL;
   d_task->prev = NULL;
