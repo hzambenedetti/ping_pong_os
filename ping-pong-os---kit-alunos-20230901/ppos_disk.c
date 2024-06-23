@@ -127,6 +127,7 @@ int disk_mgr_init(int *numblocks, int *blockSize){
 }
 
 int disk_block_read(int block, void *buffer){
+  PPOS_PREEMPT_DISABLE
   //create disk_task
   disk_task_t* d_task = (disk_task_t*) malloc(sizeof(disk_task_t));
   
@@ -146,6 +147,9 @@ int disk_block_read(int block, void *buffer){
   
   //suspends task until disk block is read
   task_suspend_disk(taskExec);
+
+  PPOS_PREEMPT_ENABLE
+
   task_switch(taskDisp);
 
   //return status of operation
