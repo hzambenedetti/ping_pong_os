@@ -51,6 +51,10 @@ task_t* pop_suspend_queue();
 
 disk_task_t* pop_disk_queue();
 
+task_t* remove_node_suspended(task_t* task);
+
+disk_task_t* remove_node_disk(disk_task_t* task);
+
 disk_task_t* sstf_disk_scheduler();
 
 disk_task_t* cscan_disk_scheduler();
@@ -309,3 +313,68 @@ void disk_append_ready_queue(task_t* task){
   readyQueue->prev = task;
   task->next = readyQueue;
 }
+
+
+//============================= SCHEDULERS IMPLEMENTATION =================================== //
+
+disk_task_t* fcfs_scheduler(){
+
+}
+
+//============================= AUX FUNCTIONS =================================== //
+
+task_t* remove_node_suspended(task_t* task){
+  if(task == NULL){
+    return NULL;
+  }
+
+  task_t* next = task->next;
+  task_t* prev = task->prev;
+
+  //task is the list's head
+  if(task == disk_suspended_queue){
+    disk_suspended_queue = next;
+  }
+
+  if(prev != NULL){
+    prev->next = next;
+  }
+  if(next != NULL){
+    next->prev = prev;
+  }
+  
+  //avoid dangling pointers
+  task->next = NULL;
+  task->prev = NULL;
+
+  return task;
+}
+
+disk_task_t* remove_node_disk(disk_task_t* task){
+  if(task == NULL){
+    return NULL;
+  }
+
+  disk_task_t* next = task->next;
+  disk_task_t* prev = task->prev;
+
+  //task is the list's head
+  if(task == disk_task_queue){
+    disk_task_queue = next;
+  }
+
+  if(prev != NULL){
+    prev->next = next;
+  }
+  if(next != NULL){
+    next->prev = prev;
+  }
+  
+  //avoid dangling pointers
+  task->next = NULL;
+  task->prev = NULL;
+
+  return task;
+}
+
+
