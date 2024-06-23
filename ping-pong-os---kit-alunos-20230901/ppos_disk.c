@@ -245,6 +245,8 @@ task_t* pop_suspend_queue(){
 
   task_t* popped = disk_suspended_queue;
   disk_suspended_queue = disk_suspended_queue->next;
+  disk_suspended_queue->prev = NULL;
+
   return popped;
 }
 
@@ -255,6 +257,7 @@ disk_task_t* pop_disk_queue(){
 
   disk_task_t* popped = disk_task_queue;
   disk_task_queue = disk_task_queue->next;
+  disk_task_queue->prev = NULL;
 
   return popped;
 }
