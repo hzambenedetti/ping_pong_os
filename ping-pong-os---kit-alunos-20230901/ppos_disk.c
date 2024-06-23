@@ -66,7 +66,7 @@ disk_task_t* fcfs_disk_scheduler();
 void disk_manager(void* args){
 
   while(1){
-    //take exclusive control over disk
+    //take exclusive control over disk task queue semaphore 
     sem_down(&disk_task_sem);
     
     //if a disk operation was completed
@@ -163,6 +163,7 @@ int disk_mgr_init(int *numblocks, int *blockSize){
 
 int disk_block_read(int block, void *buffer){
   PPOS_PREEMPT_DISABLE
+
   //create disk_task
   disk_task_t* d_task = (disk_task_t*) malloc(sizeof(disk_task_t));
   
@@ -174,10 +175,16 @@ int disk_block_read(int block, void *buffer){
   d_task->block = block;
   d_task->next = NULL;
   d_task->prev = NULL;
+  
+  //obtains disk task queue semaphore 
+  sem_down(&disk_task_sem);
 
   //Appends disk read task to disk task queue 
   append_disk_task(d_task);
   
+  //realeses disk queue semaphore 
+  sem_up(&disk_task_sem);
+
   //call disk_manager task
   sem_up(&disk_mgr_sem); 
   
@@ -207,8 +214,14 @@ int disk_block_write(int block, void *buffer){
   d_task->next = NULL;
   d_task->prev = NULL;
 
+  //obtains disk task queue semaphore 
+  sem_down(&disk_task_sem);
+  
   //Appends disk read task to disk task queue 
   append_disk_task(d_task);
+  
+  //realeses disk queue semaphore 
+  sem_up(&disk_task_sem);
   
   //call disk_manager task
   sem_up(&disk_mgr_sem); 
