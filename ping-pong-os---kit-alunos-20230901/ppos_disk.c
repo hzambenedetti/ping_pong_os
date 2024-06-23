@@ -29,7 +29,6 @@ disk_task_t* disk_task_queue;
 disk_task_t* current_disk_task;
 
 semaphore_t disk_mgr_sem;
-semaphore_t disk_sem;
 semaphore_t disk_task_sem;
 
 task_t disk_mgr_task;
@@ -124,9 +123,6 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   disk_suspended_queue = NULL;
   disk_task_queue = NULL;
   disk_sig_flag = 0;
-
-  // create disk_semaphore
-  if (sem_create(&disk_sem, 1) < 0){return -1;}
 
   //create disk_mgr_semaphore
   if (sem_create(&disk_mgr_sem, 0) < 0){return -1;}
