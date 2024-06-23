@@ -48,6 +48,12 @@ task_t* pop_suspend_queue();
 
 disk_task_t* pop_disk_queue();
 
+disk_task_t* sstf_disk_scheduler();
+
+disk_task_t* cscan_disk_scheduler();
+
+disk_task_t* fcfs_scheduler();
+
 //============================= FUNCTION IMPLEMENTATION =================================== // 
 
 void disk_manager(void* args){
