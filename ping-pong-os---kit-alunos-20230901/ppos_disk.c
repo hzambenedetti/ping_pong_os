@@ -31,7 +31,7 @@ semaphore_t disk_task_sem;
 
 task_t disk_mgr_task;
 
-disk_t* disk;
+disk_t disk;
 
 struct sigaction disk_sig;
 int disk_sig_flag;
@@ -127,10 +127,16 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   //init disk 
   if (disk_cmd(DISK_CMD_INIT, 0, 0) < 0){return -1;};
 
-  //attribute values to numblocks and blockSize
-  *numblocks = disk_cmd(DISK_CMD_DISKSIZE, 0, 0);
-  *blockSize = disk_cmd(DISK_CMD_BLOCKSIZE, 0, 0);
-
+  //Intialize disk struct
+  disk.num_blocks = disk_cmd(DISK_CMD_DISKSIZE, 0, 0);
+  disk.block_size = disk_cmd(DISK_CMD_BLOCKSIZE, 0, 0);
+  disk.total_time = 0;
+  disk.total_steps = 0;
+  disk.head_pos = 0;
+   
+  *numblocks = disk.num_blocks;
+  *blockSize = disk.block_size;
+  
   PPOS_PREEMPT_ENABLE;
   
   //return operation status
