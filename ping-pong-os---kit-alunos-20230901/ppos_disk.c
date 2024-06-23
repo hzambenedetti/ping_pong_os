@@ -112,6 +112,8 @@ int disk_mgr_init(int *numblocks, int *blockSize){
   
   //launch disk_manager task
   if(task_create(&disk_mgr_task, disk_manager, NULL) < 0){return -1;}
+  //set disk_manager as a system task so it cannot be preempted
+  disk_mgr_task.sys_task = 1;
 
   //init disk 
   if (disk_cmd(DISK_CMD_INIT, 0, 0) < 0){return -1;};
